@@ -1,3 +1,5 @@
+[中文版本](README_CN.md)
+
 # Mavrick V0.1
 
 One-handed vibe coding using Apple TV remote, customizable buttons and gestures.
