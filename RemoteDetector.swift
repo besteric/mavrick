@@ -54,15 +54,13 @@ class RemoteDetector {
             return
         }
 
-        // SiriMote uses IOHIDManagerSetDeviceMatchingMultiple with per-interface dicts.
-        // The Siri Remote A1513 exposes 3 HID interfaces (consumer, game controls, vendor),
-        // and the singular variant with vendor-only matching does not enumerate them on
-        // recent macOS BLE HID stacks.
+        // Only match Consumer (buttons) and Digitizer (touch) pages.
+        // Generic Desktop (0x01) and Apple Vendor (0xFF00) are intentionally
+        // excluded — they share HID protocols with Bluetooth mice/keyboards
+        // and IOHIDManagerOpen can interfere with those peripherals.
         let matchingDicts: [[String: Any]] = [
-            [kIOHIDVendorIDKey: appleVendorID, kIOHIDPrimaryUsagePageKey: 0x0C],   // Consumer Page
-            [kIOHIDVendorIDKey: appleVendorID, kIOHIDPrimaryUsagePageKey: 0x0D],   // Digitizer / Game Controls
-            [kIOHIDVendorIDKey: appleVendorID, kIOHIDPrimaryUsagePageKey: 0xFF00], // Apple vendor-defined
-            [kIOHIDVendorIDKey: appleVendorID, kIOHIDPrimaryUsagePageKey: 0x01],   // Generic Desktop (kept for keyboards/trackpads)
+            [kIOHIDVendorIDKey: appleVendorID, kIOHIDPrimaryUsagePageKey: 0x0C],   // Consumer Page (buttons)
+            [kIOHIDVendorIDKey: appleVendorID, kIOHIDPrimaryUsagePageKey: 0x0D],   // Digitizer / Game Controls (touch)
         ]
         IOHIDManagerSetDeviceMatchingMultiple(manager, matchingDicts as CFArray)
 
