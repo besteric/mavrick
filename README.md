@@ -1,5 +1,3 @@
-<img src="banner.png" alt="Mavrick — a walkie-talkie for Claude Code">
-
 # Mavrick V0.1
 
 One-handed vibe coding using Apple TV remote, customizable buttons and gestures.
