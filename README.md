@@ -6,7 +6,7 @@ Grab a remote, push to talk, and vibe-code with Claude Code without breaking flo
 
 <img src="demo.gif" alt="Mavrick demo" width="70%">
 
-Tested with the 1st-gen Siri Remote (Model A1513). Support for Xbox Adaptive Joystick coming soon.
+Tested with the 1st-gen Siri Remote (Model A1513, `0x0266`) and newer models (`0x026D`).
 
 > **Experimental release.** For now, Mavrick ships as an experiment — there is no pre-built binary. You'll have to build the app bundle yourself (see [Building](#building)). Your mileage may vary.
 
@@ -40,7 +40,9 @@ Each physical Siri Remote button is independently assignable via the menu bar.
 | Trackpad click | Left mouse click |
 | Siri/mic button | Space on hold (Claude voice dictation must be enabled) |
 
-**Hold-Capable Buttons:** Push-to-talk actions require buttons that emit both press and release HID events. Only Play/Pause, Volume Up, Volume Down, and Siri buttons allow for both events. Also this button can trigger right command or option key for other dictation apps like [VoiceInk](https://github.com/Beingpax/VoiceInk).
+**Hold-Capable Buttons:** Push-to-talk actions require buttons that emit both press and release HID events. Only Play/Pause, Volume Up, Volume Down, and Siri buttons allow for both events. Dictation actions include Space (Claude Code), Fn/Globe (WeChat / 3rd-party voice input), Right Command, and Right Option. Also compatible with [VoiceInk](https://github.com/Beingpax/VoiceInk).
+
+**Additional key actions:** Tab (autocomplete / accept suggestion) is available for all buttons.
 
 
 ### Swipe Gestures
@@ -156,14 +158,22 @@ This is the standard reverse-engineered technique (originally surfaced in projec
 ### Long-term direction: Xbox Adaptive Joystick
 
 Between the private `MultitouchSupport` framework and the undocumented `NX_SYSDEFINED` plumbing, the Siri Remote path is built on two proprietary, reverse-engineered interfaces that Apple can break at any time. Mavrick may migrate its primary input to the **Xbox Adaptive Joystick**, which speaks standard USB HID / GameController.framework and avoids every proprietary hazard above. That gives a more permanent, App Store–viable foundation — and, as a bonus, a genuinely accessible input device — while the Siri Remote support remains as a best-effort path for users who already own one.
-- Tested on **Siri Remote 1st-gen (A1513, product ID `0x266`)**. Button HID codes are a superset likely to cover the 2nd-gen Siri Remote (A2540) as well, but its click-ring directional presses and dedicated Mute button are not yet mapped in `identifyButton`.
+- Tested on **Siri Remote 1st-gen (A1513, product ID `0x0266`)** and **newer models (product ID `0x026D`)**. Button HID codes are a superset likely to cover the 2nd-gen Siri Remote (A2540) as well, but its click-ring directional presses and dedicated Mute button are not yet mapped in `identifyButton`.
 - Ad-hoc signing ties TCC permission grants to the exact binary hash — rebuilds may require re-approval in System Settings.
 
 ---
 
 ## Credits
 
- **Fork & improvements.** Mavrick is built on top of [Remotastic](https://github.com/lauschue/Remotastic) by [@lauschue](https://github.com/lauschue), which provided the foundational Siri-Remote HID handling, MultitouchSupport integration, and menu-bar scaffolding. Mavrick extends it with configurable Claude Code workflows, keyboard shortcuts, push-to-talk and swipe gesture.
+Mavrick is a fork of [HyperVibe](https://github.com/machinarii/hypervibe) by [Jinsoo An](https://github.com/machinarii) (MIT License), which was in turn built on [Remotastic](https://github.com/lauschue/Remotastic) by [@lauschue](https://github.com/lauschue). Remotastic provided the foundational Siri-Remote HID handling, MultitouchSupport integration, and menu-bar scaffolding. HyperVibe extended it with configurable Claude Code workflows, keyboard shortcuts, push-to-talk and swipe gesture support.
+
+**Mavrick additions:**
+- Staggered HID interface seizing to prevent Bluetooth controller crashes
+- Fn/Globe key support via `flagsChanged` events (for WeChat and other 3rd-party voice input)
+- Tab key action for autocomplete and suggestion acceptance
+- Cursor edge clamping and drag improvements (merged from HyperVibe PR #1 by [@ChestnutLUO](https://github.com/ChestnutLUO))
+- Support for newer Siri Remote models (product ID `0x026D`)
+
 - Icons from [The Noun Project](https://thenounproject.com/):
   - [Arrow Up by Dayeong Kim](https://thenounproject.com/icon/arrow-up-6066125/)
   - [Microphone by Alvida](https://thenounproject.com/icon/microphone-8162320/)
