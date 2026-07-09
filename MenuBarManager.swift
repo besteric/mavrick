@@ -353,7 +353,8 @@ class MenuBarManager {
             vc.stopCapture()
             voiceCaptureMenuItem?.title = "Start Voice Capture"
         } else {
-            vc.startCapture()
+            // Default log path: PacketLogger saves to /tmp/ via File → Save As...
+            vc.startCapture(from: "/tmp/packetlogger.log")
             voiceCaptureMenuItem?.title = "Stop Voice Capture"
         }
     }
