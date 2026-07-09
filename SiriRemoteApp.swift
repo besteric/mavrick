@@ -18,7 +18,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var remoteInputHandler: RemoteInputHandler?
     private var mediaKeyInterceptor: MediaKeyInterceptor?
     private var touchHandler: TouchHandler?
-    
+    private var voiceCapture: SiriRemoteVoiceCapture?
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         print("🚀 Mavrick starting...")
 
@@ -37,8 +38,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         statusItem.isVisible = true
         
+        // Initialize voice capture (PacketLogger + Opus + WAV pipeline)
+        voiceCapture = SiriRemoteVoiceCapture()
+        voiceCapture?.onWavReady = { url in
+            print("🎤 Voice recording saved: \(url.path)")
+        }
+        voiceCapture?.onVoiceStateChange = { active in
+            print(active ? "🗣 Speaking..." : "🗣 Done speaking")
+        }
+
         // Initialize menu bar manager
         menuBarManager = MenuBarManager(statusItem: statusItem)
+        menuBarManager.voiceCaptureManager = voiceCapture
         
         // Check accessibility permissions
         checkAccessibilityPermissions()
@@ -101,6 +112,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     private func cleanup() {
+        voiceCapture?.stopCapture()
         touchHandler?.stop()
         remoteDetector?.stopDetection()
         mediaKeyInterceptor?.stop()
