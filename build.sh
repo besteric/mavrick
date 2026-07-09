@@ -18,9 +18,6 @@ SWIFT_FILES=(
     "MediaKeyInterceptor.swift"
     "TouchHandler.swift"
     "SystemVolume.swift"
-    "VoiceCapture/OpusDecoder.swift"
-    "VoiceCapture/VoicePacketParser.swift"
-    "VoiceCapture/SiriRemoteVoiceCapture.swift"
 )
 
 # Find SDK path
@@ -44,26 +41,14 @@ fi
 
 echo "Building for: $TARGET"
 
-# Compile C bridge separately (swiftc -Xcc doesn't always forward include paths correctly)
-clang -c -target "$TARGET" \
-    -isysroot "$SDK_PATH" \
-    -I/opt/homebrew/include \
-    "VoiceCapture/OpusBridge.c" \
-    -o /tmp/mavrick_opus_bridge.o
-
-echo "  ✓ C bridge compiled"
-
-# Build and link
+# Build
 swiftc \
-    /tmp/mavrick_opus_bridge.o \
     -sdk "$SDK_PATH" \
     -target "$TARGET" \
     -o Mavrick \
     "${SWIFT_FILES[@]}" \
     -import-objc-header SiriRemote-Bridging-Header.h \
     -F /System/Library/PrivateFrameworks \
-    -L/opt/homebrew/lib \
-    -lopus \
     -framework IOKit \
     -framework CoreGraphics \
     -framework AudioToolbox \

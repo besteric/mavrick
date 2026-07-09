@@ -108,11 +108,6 @@ class MenuBarManager {
     /// Set by app delegate so menu bar can delegate media actions to MediaController.
     var mediaController: MediaController?
 
-    /// Voice capture manager — controls PacketLogger + Opus decoding pipeline.
-    var voiceCaptureManager: SiriRemoteVoiceCapture?
-
-    private var voiceCaptureMenuItem: NSMenuItem?
-
     init(statusItem: NSStatusItem) {
         self.statusItem = statusItem
         self.menu = NSMenu()
@@ -330,35 +325,12 @@ class MenuBarManager {
 
         menu.addItem(NSMenuItem.separator())
 
-        // Voice Capture toggle
-        let voiceItem = NSMenuItem(title: "Start Voice Capture", action: #selector(toggleVoiceCapture), keyEquivalent: "v")
-        voiceItem.target = self
-        voiceCaptureMenuItem = voiceItem
-        menu.addItem(voiceItem)
-
-        menu.addItem(NSMenuItem.separator())
-
         // Quit
         let quitItem = NSMenuItem(title: "Quit", action: #selector(quitApp), keyEquivalent: "q")
         quitItem.target = self
         menu.addItem(quitItem)
     }
-
-    @objc private func toggleVoiceCapture() {
-        guard let vc = voiceCaptureManager else {
-            print("⚠️ Voice capture not initialized")
-            return
-        }
-        if vc.isCapturing {
-            vc.stopCapture()
-            voiceCaptureMenuItem?.title = "Start Voice Capture"
-        } else {
-            // Default log path: PacketLogger saves to /tmp/ via File → Save As...
-            vc.startCapture(from: "/tmp/packetlogger.log")
-            voiceCaptureMenuItem?.title = "Stop Voice Capture"
-        }
-    }
-
+    
     @objc private func changeMapping(_ sender: NSMenuItem) {
         guard let (buttonKey, action) = sender.representedObject as? (String, ButtonAction) else {
             return

@@ -9,6 +9,5 @@
 #define SiriRemote_Bridging_Header_h
 
 #import "MultitouchSupport.h"
-#import "VoiceCapture/OpusBridge.h"
 
 #endif /* SiriRemote_Bridging_Header_h */

@@ -18,8 +18,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var remoteInputHandler: RemoteInputHandler?
     private var mediaKeyInterceptor: MediaKeyInterceptor?
     private var touchHandler: TouchHandler?
-    private var voiceCapture: SiriRemoteVoiceCapture?
-
+    
     func applicationDidFinishLaunching(_ notification: Notification) {
         print("🚀 Mavrick starting...")
 
@@ -29,7 +28,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         // Run as menu bar app (no dock icon)
         NSApp.setActivationPolicy(.accessory)
-
+        
         // Create menu bar item
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         guard let statusItem = statusItem else {
@@ -37,23 +36,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
         statusItem.isVisible = true
-
-        // Initialize voice capture (PacketLogger + Opus + WAV pipeline)
-        voiceCapture = SiriRemoteVoiceCapture()
-        voiceCapture?.onWavReady = { url in
-            print("🎤 Voice recording saved: \(url.path)")
-        }
-        voiceCapture?.onVoiceStateChange = { active in
-            print(active ? "🗣 Speaking..." : "🗣 Done speaking")
-        }
-
+        
         // Initialize menu bar manager
         menuBarManager = MenuBarManager(statusItem: statusItem)
-        menuBarManager.voiceCaptureManager = voiceCapture
-
+        
         // Check accessibility permissions
         checkAccessibilityPermissions()
-
+        
         // Initialize controllers
         let cursorController = CursorController()
 
@@ -112,7 +101,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     private func cleanup() {
-        voiceCapture?.stopCapture()
         touchHandler?.stop()
         remoteDetector?.stopDetection()
         mediaKeyInterceptor?.stop()
